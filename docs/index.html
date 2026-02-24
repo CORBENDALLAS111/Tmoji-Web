@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMoji-Web - Documentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <style>
+        :root {
+            /* Telegram Design System Colors */
+            --tg-blue: #0088CC;
+            --tg-blue-light: #0099E0;
+            --tg-blue-dark: #0077B3;
+            --tg-bg: #FFFFFF;
+            --tg-bg-secondary: #F5F5F5;
+            --tg-bg-tertiary: #E8E8E8;
+            --tg-text: #000000;
+            --tg-text-secondary: #707579;
+            --tg-border: #D9D9D9;
+            --tg-border-light: #E6E6E6;
+
+            /* Apple Dev Docs inspired */
+            --code-bg: #F5F5F7;
+            --code-border: #E5E5E5;
+            --accent-green: #34C759;
+            --accent-orange: #FF9500;
+            --accent-red: #FF3B30;
+
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', SF Mono, Monaco, monospace;
+
+            /* Spacing */
+            --sidebar-width: 280px;
+            --header-height: 64px;
+            --max-content-width: 900px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--tg-bg);
+            color: var(--tg-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header with slide-down animation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--tg-border-light);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--tg-text);
+            text-decoration: none;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .header-logo:hover {
+            transform: scale(1.02);
+        }
+
+        .header-logo svg {
+            width: 32px;
+            height: 32px;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .header-logo:hover svg {
+            transform: rotate(360deg);
+        }
+
+        .header-nav {
+            margin-left: auto;
+            display: flex;
+            gap: 24px;
+        }
+
+        .header-nav a {
+            color: var(--tg-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .header-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--tg-blue);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-nav a:hover {
+            color: var(--tg-blue);
+        }
+
+        .header-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* Sidebar with slide-in animation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            background: var(--tg-bg-secondary);
+            border-right: 1px solid var(--tg-border-light);
+            overflow-y: auto;
+            padding: 24px 0;
+            animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .sidebar-section:nth-child(1) { animation-delay: 0.2s; }
+        .sidebar-section:nth-child(2) { animation-delay: 0.3s; }
+        .sidebar-section:nth-child(3) { animation-delay: 0.4s; }
+        .sidebar-section:nth-child(4) { animation-delay: 0.5s; }
+        .sidebar-section:nth-child(5) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--tg-text-secondary);
+            padding: 0 24px 8px;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 8px 24px;
+            color: var(--tg-text);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: rgba(0, 136, 204, 0.05);
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .sidebar-link:hover::before {
+            width: 100%;
+        }
+
+        .sidebar-link:hover {
+            color: var(--tg-blue);
+            padding-left: 28px;
+        }
+
+        .sidebar-link.active {
+            background: rgba(0, 136, 204, 0.08);
+            color: var(--tg-blue);
+            border-left-color: var(--tg-blue);
+            padding-left: 28px;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            max-width: calc(100% - var(--sidebar-width));
+        }
+
+        .content {
+            max-width: var(--max-content-width);
+            padding: 48px 64px;
+            margin: 0 auto;
+        }
+
+        /* Typography with stagger animations */
+        h1 {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 48px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--tg-border-light);
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 32px;
+            margin-bottom: 12px;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 8px;
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--tg-text-secondary);
+            font-size: 16px;
+            line-height: 1.7;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        p strong {
+            color: var(--tg-text);
+            font-weight: 600;
+        }
+
+        /* Code Blocks with hover lift */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.5;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        pre:hover {
+            border-color: var(--tg-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--tg-text);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Inline Code */
+        .inline-code {
+            background: rgba(0, 136, 204, 0.1);
+            color: var(--tg-blue-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .inline-code:hover {
+            background: rgba(0, 136, 204, 0.15);
+        }
+
+        /* Info Boxes with slide-in */
+        .info-box {
+            background: rgba(0, 136, 204, 0.05);
+            border-left: 4px solid var(--tg-blue);
+            padding: 20px 24px;
+            border-radius: 0 12px 12px 0;
+            margin: 24px 0;
+            animation: slideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .info-box:hover {
+            transform: translateX(4px);
+            background: rgba(0, 136, 204, 0.08);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .info-box.warning {
+            background: rgba(255, 149, 0, 0.05);
+            border-left-color: var(--accent-orange);
+        }
+
+        .info-box.warning:hover {
+            background: rgba(255, 149, 0, 0.08);
+        }
+
+        .info-box.success {
+            background: rgba(52, 199, 89, 0.05);
+            border-left-color: var(--accent-green);
+        }
+
+        .info-box.success:hover {
+            background: rgba(52, 199, 89, 0.08);
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--tg-text);
+        }
+
+        /* Interactive Demo with entrance animation */
+        .demo-section {
+            background: var(--tg-bg-secondary);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 32px 0;
+            animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .demo-section:hover {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .demo-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--tg-border);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: var(--font-mono);
+            margin-bottom: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        .demo-input:focus {
+            outline: none;
+            border-color: var(--tg-blue);
+            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .demo-button {
+            background: var(--tg-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .demo-button:hover {
+            background: var(--tg-blue-dark);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.3);
+        }
+
+        .demo-button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .demo-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .emoji-item {
+            background: white;
+            border: 1px solid var(--tg-border-light);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .emoji-item:hover {
+            border-color: var(--tg-blue);
+            box-shadow: 0 8px 24px rgba(0, 136, 204, 0.15);
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        .emoji-item:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .emoji-preview {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 8px;
+            background: var(--tg-bg-secondary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .emoji-item:hover .emoji-preview {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .emoji-id {
+            font-size: 11px;
+            color: var(--tg-text-secondary);
+            font-family: var(--font-mono);
+            word-break: break-all;
+        }
+
+        /* Tables with row animations */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 14px;
+        }
+
+        thead {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: var(--tg-text-secondary);
+            border-bottom: 1px solid var(--tg-border);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--tg-border-light);
+            vertical-align: top;
+            transition: all 0.2s ease;
+        }
+
+        tr {
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        tbody tr:nth-child(1) { animation-delay: 0.05s; }
+        tbody tr:nth-child(2) { animation-delay: 0.1s; }
+        tbody tr:nth-child(3) { animation-delay: 0.15s; }
+        tbody tr:nth-child(4) { animation-delay: 0.2s; }
+        tbody tr:nth-child(5) { animation-delay: 0.25s; }
+        tbody tr:nth-child(6) { animation-delay: 0.3s; }
+
+        tr:hover td {
+            background: var(--tg-bg-secondary);
+            transform: scale(1.01);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: var(--tg-text-secondary);
+            transition: all 0.2s ease;
+            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        li:nth-child(1) { animation-delay: 0.05s; }
+        li:nth-child(2) { animation-delay: 0.1s; }
+        li:nth-child(3) { animation-delay: 0.15s; }
+        li:nth-child(4) { animation-delay: 0.2s; }
+        li:nth-child(5) { animation-delay: 0.25s; }
+
+        li:hover {
+            color: var(--tg-text);
+            transform: translateX(4px);
+        }
+
+        li strong {
+            color: var(--tg-text);
+        }
+
+        /* Architecture Diagram with stagger */
+        .architecture {
+            background: var(--tg-bg-secondary);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 24px 0;
+            text-align: center;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .arch-box {
+            background: white;
+            border: 2px solid var(--tg-border);
+            border-radius: 12px;
+            padding: 20px 32px;
+            font-weight: 600;
+            min-width: 140px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+        }
+
+        .arch-box:nth-child(1) { animation-delay: 0.1s; }
+        .arch-box:nth-child(3) { animation-delay: 0.2s; }
+        .arch-box:nth-child(5) { animation-delay: 0.3s; }
+        .arch-box:nth-child(7) { animation-delay: 0.4s; }
+
+        .arch-box:hover {
+            border-color: var(--tg-blue);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .arch-box.primary {
+            border-color: var(--tg-blue);
+            background: rgba(0, 136, 204, 0.05);
+        }
+
+        .arch-box.primary:hover {
+            background: rgba(0, 136, 204, 0.1);
+        }
+
+        .arch-arrow {
+            font-size: 24px;
+            color: var(--tg-text-secondary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(4px); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 999;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+        }
+
+        /* Section visibility */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Copy button with animations */
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: white;
+            border: 1px solid var(--tg-border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-4px);
+        }
+
+        pre:hover .copy-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .copy-btn:hover {
+            background: var(--tg-bg-secondary);
+            border-color: var(--tg-blue);
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .badge.new {
+            background: rgba(52, 199, 89, 0.1);
+            color: var(--accent-green);
+        }
+
+        .badge.beta {
+            background: rgba(0, 136, 204, 0.1);
+            color: var(--tg-blue);
+        }
+
+        /* Links with underline animation */
+        a {
+            color: var(--tg-blue);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--tg-blue-dark);
+        }
+
+        /* Loading spinner for demo */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--tg-bg-tertiary);
+            border-top-color: var(--tg-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stagger children animation helper */
+        .stagger-children > * {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+        .stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+        .stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+        .stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+        .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+        .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="header-logo">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" fill="#0088CC"/>
+                <path d="M10 16L14 20L22 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            TMoji-Web
+        </a>
+        <nav class="header-nav">
+            <a href="#" onclick="showSection('demo'); return false;">Demo</a>
+            <a href="https://github.com/yourusername/tmoji-web" target="_blank">GitHub</a>
+        </nav>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Getting Started</div>
+                <a href="#" class="sidebar-link active" onclick="showSection('overview'); return false;" data-section="overview">Overview</a>
+                <a href="#" class="sidebar-link" onclick="showSection('installation'); return false;" data-section="installation">Installation</a>
+                <a href="#" class="sidebar-link" onclick="showSection('quickstart'); return false;" data-section="quickstart">Quick Start</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Core Concepts</div>
+                <a href="#" class="sidebar-link" onclick="showSection('animated'); return false;" data-section="animated">Animated Emojis</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">API Reference</div>
+                <a href="#" class="sidebar-link" onclick="showSection('api-client'); return false;" data-section="api-client">TMojiClass</a>
+                <a href="#" class="sidebar-link" onclick="showSection('methods'); return false;" data-section="methods">Methods</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Backend</div>
+                <a href="#" class="sidebar-link" onclick="showSection('backend-setup'); return false;" data-section="backend-setup">Setup</a>
+                <a href="#" class="sidebar-link" onclick="showSection('endpoints'); return false;" data-section="endpoints">Endpoints</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Advanced</div>
+                <a href="#" class="sidebar-link" onclick="showSection('performance'); return false;" data-section="performance">Performance</a>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="content">
+                <!-- OVERVIEW SECTION -->
+                <section id="overview" class="section active">
+                    <h1>TMoji-Web</h1>
+                    <p style="font-size: 20px; color: var(--tg-text);">
+                        Production-ready library for rendering <strong>Telegram Premium Custom Emojis</strong> on any website. 
+                        Supports static PNG, animated TGS (Lottie), WEBM, and GIF formats with lazy loading and intelligent caching.
+                    </p>
+
+                    <div class="info-box">
+                        <div class="info-box-title">What is this?</div>
+                        <p style="margin: 0;">
+                            TMoji-Web bridges the gap between Telegram's premium custom emoji ecosystem and the open web. 
+                            It provides a complete frontend library, backend API service, and documentation to seamlessly 
+                            integrate Telegram's animated emoji packs into your web applications.
+                        </p>
+                    </div>
+
+                    <h2>Architecture Overview</h2>
+                    <div class="architecture">
+                        <div class="arch-flow">
+                            <div class="arch-box">Your Website</div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-box primary">TMojiLibrary</div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-box">Backend API</div>
+                            <span class="arch-arrow">→</span>
+                            <div class="arch-box">Telegram Bot API</div>
+                        </div>
+                    </div>
+
+                    <h2>Key Features</h2>
+                    <ul>
+                        <li><strong>Multiple Formats</strong> — PNG, TGS (Lottie), WEBM, GIF support</li>
+                        <li><strong>Lazy Loading</strong> — Emojis load only when visible</li>
+                        <li><strong>Smart Caching</strong> — Memory + localStorage LRU cache</li>
+                        <li><strong>Tree Shakable</strong> — Import only what you need</li>
+                        <li><strong>TypeScript</strong> — Full type definitions included</li>
+                        <li><strong>CDN Ready</strong> — Works with any static host</li>
+                    </ul>
+
+                    <h2>Example Pack</h2>
+                    <p>Try loading this example Telegram emoji pack:</p>
+                    <pre><code>https://t.me/addemoji/vector_icons_by_fStikBot</code></pre>
+                </section>
+
+                <!-- INSTALLATION SECTION -->
+                <section id="installation" class="section">
+                    <h1>Installation</h1>
+
+                    <h2>NPM (Recommended)</h2>
+                    <pre><code>npm install tmoji-web</code></pre>
+
+                    <p>Install peer dependency for animated emojis:</p>
+                    <pre><code>npm install lottie-web</code></pre>
+
+                    <h2>CDN</h2>
+                    <pre><code>&lt;!-- Via jsDelivr --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/tmoji-web@1.0.0/dist/tmoji-web.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- Via unpkg --&gt;
+&lt;script src="https://unpkg.com/tmoji-web@1.0.0/dist/tmoji-web.min.js"&gt;&lt;/script&gt;</code></pre>
+
+                    <h2>ES Modules</h2>
+                    <pre><code>import { TMoji } from 'tmoji-web';</code></pre>
+
+                    <h2>CommonJS</h2>
+                    <pre><code>const { TMoji } = require('tmoji-web');</code></pre>
+                </section>
+
+                <!-- QUICK START SECTION -->
+                <section id="quickstart" class="section">
+                    <h1>Quick Start</h1>
+
+                    <h2>1. Initialize the Library</h2>
+                    <pre><code>import { TMoji } from 'tmoji-web';
+
+const tg = new TMoji({
+  apiBaseUrl: 'https://api.yourdomain.com',
+  defaultSize: '1.2em',
+  animated: true
+});</code></pre>
+
+                    <h2>2. Load an Emoji Pack</h2>
+                    <pre><code>const pack = await tg.loadPack('https://t.me/addemoji/vector_icons_by_fStikBot');
+console.log(`Loaded ${pack.stickers.length} emojis`);</code></pre>
+
+                    <h2>3. Render a Single Emoji</h2>
+                    <pre><code>// By ID
+await tg.renderTo('#emoji-container', '123456789');
+
+// With options
+await tg.renderTo('#emoji-container', '123456789', {
+  size: '2em',
+  animated: true
+});</code></pre>
+
+                    <h2>4. Render Text with Emojis</h2>
+                    <pre><code>await tg.renderText('#message', 'Hello {emoji:123456789} World!');</code></pre>
+
+                    <h2>5. Auto-parse HTML Tags</h2>
+                    <pre><code>&lt;!-- In your HTML --&gt;
+&lt;p&gt;Check this out: &lt;tg-emoji id="123456789" size="1.5em"&gt;&lt;/tg-emoji&gt;&lt;/p&gt;
+
+&lt;!-- In your JS --&gt;
+await tg.parseAll();</code></pre>
+                </section>
+
+                <!-- API CLIENT SECTION -->
+                <section id="api-client" class="section">
+                    <h1>TMojiClass</h1>
+
+                    <h2>Constructor</h2>
+                    <pre><code>new TMoji(config?: Partial&lt;TMojiConfig&gt;)</code></pre>
+
+                    <h3>Configuration Options</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>apiBaseUrl</code></td>
+                                <td>string</td>
+                                <td>http://localhost:8000</td>
+                                <td>Backend API base URL</td>
+                            </tr>
+                            <tr>
+                                <td><code>defaultSize</code></td>
+                                <td>string</td>
+                                <td>1.2em</td>
+                                <td>Default emoji size</td>
+                            </tr>
+                            <tr>
+                                <td><code>animated</code></td>
+                                <td>boolean</td>
+                                <td>true</td>
+                                <td>Enable animations by default</td>
+                            </tr>
+                            <tr>
+                                <td><code>cacheDuration</code></td>
+                                <td>number</td>
+                                <td>86400000</td>
+                                <td>Cache duration in ms (24h)</td>
+                            </tr>
+                            <tr>
+                                <td><code>lazyThreshold</code></td>
+                                <td>string</td>
+                                <td>50px</td>
+                                <td>Lazy loading margin</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- METHODS SECTION -->
+                <section id="methods" class="section">
+                    <h1>Methods</h1>
+
+                    <h2>loadPack(urlOrName: string)</h2>
+                    <p>Load an emoji pack from Telegram link or pack name.</p>
+                    <pre><code>const pack = await tg.loadPack('adaptive1pack_by_TMojiBot');
+// or
+const pack = await tg.loadPack('https://t.me/addemoji/vector_icons_by_fStikBot');</code></pre>
+
+                    <h2>getEmoji(id: string)</h2>
+                    <p>Fetch a single emoji by its custom emoji ID.</p>
+                    <pre><code>const emoji = await tg.getEmoji('123456789');
+console.log(emoji.file_type); // 'tgs', 'png', 'webm', etc.</code></pre>
+
+                    <h2>renderTo(container, emojiId, options?)</h2>
+                    <p>Render an emoji to a DOM element.</p>
+                    <pre><code>await tg.renderTo('#container', '123456789', {
+  size: '2em',
+  animated: true,
+  onLoad: () => console.log('Loaded!')
+});</code></pre>
+
+                    <h2>lazyRender(container, emojiId, options?)</h2>
+                    <p>Render with lazy loading (waits until visible).</p>
+                    <pre><code>await tg.lazyRender('#container', '123456789');</code></pre>
+
+                    <h2>renderText(container, text, options?)</h2>
+                    <p>Parse and render text with <code>{emoji:ID}</code> syntax.</p>
+                    <pre><code>await tg.renderText('#message', 'Hello {emoji:123} World {emoji:456}!');</code></pre>
+
+                    <h2>parseAll(options?)</h2>
+                    <p>Auto-parse all <code>&lt;tg-emoji&gt;</code> tags in the document.</p>
+                    <pre><code>await tg.parseAll();</code></pre>
+                </section>
+
+                <!-- BACKEND SETUP SECTION -->
+                <section id="backend-setup" class="section">
+                    <h1>Backend Setup</h1>
+
+                    <h2>Prerequisites</h2>
+                    <ul>
+                        <li>Python 3.9+</li>
+                        <li>Telegram Bot Token (get from <a href="https://t.me/BotFather">@BotFather</a>)</li>
+                    </ul>
+
+                    <h2>Installation</h2>
+                    <pre><code>cd backend
+pip install -r requirements.txt</code></pre>
+
+                    <h2>Configuration</h2>
+                    <p>Set environment variable:</p>
+                    <pre><code>export BOT_TOKEN="your_bot_token_here"</code></pre>
+
+                    <h2>Running</h2>
+                    <pre><code>python -m app.main</code></pre>
+                    <p>Or with uvicorn directly:</p>
+                    <pre><code>uvicorn app.main:app --reload --host 0.0.0.0 --port 8000</code></pre>
+
+                    <div class="info-box warning">
+                        <div class="info-box-title">Important</div>
+                        <p style="margin: 0;">
+                            The backend requires a valid Telegram Bot Token. Without it, the API will return 503 errors. 
+                            The bot does not need any special permissions, but it must be active.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ENDPOINTS SECTION -->
+                <section id="endpoints" class="section">
+                    <h1>API Endpoints</h1>
+
+                    <h2>GET /pack</h2>
+                    <p>Load emoji pack by Telegram URL or name.</p>
+                    <pre><code>GET /pack?url=https://t.me/addemoji/vector_icons_by_fStikBot</code></pre>
+
+                    <h3>Response</h3>
+                    <pre><code>{
+  "name": "adaptive1pack_by_TMojiBot",
+  "title": "Adaptive Pack 1",
+  "sticker_type": "custom_emoji",
+  "stickers": [
+    {
+      "id": "123456789",
+      "short_name": "adaptive_smile",
+      "file_type": "tgs",
+      "file_url": "https://api.telegram.org/file/bot...",
+      "is_animated": true
+    }
+  ]
+}</code></pre>
+
+                    <h2>GET /emoji/{id}</h2>
+                    <p>Get single emoji by custom emoji ID.</p>
+                    <pre><code>GET /emoji/123456789</code></pre>
+
+                    <h2>GET /manifest/{pack_id}</h2>
+                    <p>Get pack manifest JSON.</p>
+                    <pre><code>GET /manifest/adaptive1pack_by_TMojiBot</code></pre>
+                </section>
+
+                <!-- ANIMATED SECTION -->
+                <section id="animated" class="section">
+                    <h1>Animated Emojis (TGS/Lottie)</h1>
+
+                    <h2>What is TGS?</h2>
+                    <p>
+                        TGS is Telegram's sticker format — a gzip-compressed Lottie JSON animation. 
+                        The library automatically decompresses TGS files and renders them using lottie-web.
+                    </p>
+
+                    <h2>Rendering Modes</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Renderer</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TGS</td>
+                                <td>lottie-web (SVG)</td>
+                                <td>Decompressed via CompressionStream API</td>
+                            </tr>
+                            <tr>
+                                <td>WEBM</td>
+                                <td>&lt;video&gt; element</td>
+                                <td>Hardware accelerated</td>
+                            </tr>
+                            <tr>
+                                <td>GIF</td>
+                                <td>&lt;img&gt; element</td>
+                                <td>Universal support</td>
+                            </tr>
+                            <tr>
+                                <td>PNG</td>
+                                <td>&lt;img&gt; element</td>
+                                <td>Static fallback</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Performance Tips</h2>
+                    <ul>
+                        <li>Use <code>lazyRender()</code> for emojis below the fold</li>
+                        <li>Set <code>animated: false</code> for low-power devices</li>
+                        <li>Limit concurrent Lottie animations (max 10-20)</li>
+                        <li>Use PNG thumbnails as placeholders</li>
+                    </ul>
+                </section>
+
+                <!-- PERFORMANCE SECTION -->
+                <section id="performance" class="section">
+                    <h1>Performance</h1>
+
+                    <h2>Lazy Loading</h2>
+                    <p>
+                        Emojis use Intersection Observer to load only when visible. 
+                        Configure the threshold in constructor options.
+                    </p>
+
+                    <h2>Caching Strategy</h2>
+                    <p>Two-tier caching system:</p>
+                    <ul>
+                        <li><strong>Memory Cache:</strong> LRU cache (max 100 items)</li>
+                        <li><strong>localStorage:</strong> Persistent across sessions</li>
+                    </ul>
+
+                    <h2>Bundle Size</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Import</th>
+                                <th>Size (gzipped)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Core only</td>
+                                <td>~8 KB</td>
+                            </tr>
+                            <tr>
+                                <td>With Lottie</td>
+                                <td>~45 KB</td>
+                            </tr>
+                            <tr>
+                                <td>Full bundle</td>
+                                <td>~52 KB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- DEMO SECTION -->
+                <section id="demo" class="section">
+                    <h1>Live Demo</h1>
+
+                    <div class="demo-section">
+                        <div class="demo-title">Load Emoji Pack</div>
+                        <p>Paste a Telegram emoji pack URL to preview all emojis:</p>
+                        <input type="text" class="demo-input" id="packUrl" 
+                               placeholder="https://t.me/addemoji/vector_icons_by_fStikBot"
+                               value="https://t.me/addemoji/vector_icons_by_fStikBot">
+                        <button class="demo-button" onclick="loadPack()">Load Pack</button>
+                        <div id="packResults" class="demo-grid"></div>
+                    </div>
+
+                    <div class="demo-section">
+                        <div class="demo-title">Render Single Emoji</div>
+                        <input type="text" class="demo-input" id="emojiId" placeholder="Enter emoji ID">
+                        <button class="demo-button" onclick="renderEmoji()">Render</button>
+                        <div id="emojiPreview" style="margin-top: 20px; min-height: 100px;"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            // Show target
+            document.getElementById(sectionId).classList.add('active');
+            // Update sidebar
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            const link = document.querySelector(`[data-section="${sectionId}"]`);
+            if (link) link.classList.add('active');
+            // Scroll to top
+            window.scrollTo(0, 0);
+            // Update URL hash
+            history.pushState(null, null, `#${sectionId}`);
+            return false;
+        }
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function() {
+            const hash = window.location.hash.slice(1) || 'overview';
+            showSection(hash);
+        });
+
+        // Copy code functionality
+        document.querySelectorAll('pre').forEach(pre => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.onclick = () => {
+                navigator.clipboard.writeText(pre.textContent.replace('Copy', '').trim());
+                btn.textContent = 'Copied!';
+                btn.style.background = 'rgba(52, 199, 89, 0.1)';
+                btn.style.color = 'var(--accent-green)';
+                btn.style.borderColor = 'var(--accent-green)';
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.style.background = 'white';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            };
+            pre.style.position = 'relative';
+            pre.appendChild(btn);
+        });
+
+        // Demo functions
+        async function loadPack() {
+            const url = document.getElementById('packUrl').value;
+            const results = document.getElementById('packResults');
+            results.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div><p style="text-align:center;">Loading...</p>';
+
+            setTimeout(() => {
+                results.innerHTML = '<div class="info-box" style="grid-column: 1/-1;">Demo mode: Connect backend to load real emojis</div>';
+            }, 800);
+        }
+
+        function renderEmoji() {
+            const id = document.getElementById('emojiId').value;
+            const preview = document.getElementById('emojiPreview');
+            if (!id) {
+                preview.innerHTML = '<div class="info-box warning">Please enter an emoji ID</div>';
+                return;
+            }
+            preview.innerHTML = '<div class="info-box">Demo: Would render emoji ' + id + '</div>';
+        }
+
+        // Mobile sidebar toggle
+        if (window.innerWidth <= 1024) {
+            const menuBtn = document.createElement('button');
+            menuBtn.innerHTML = '☰';
+            menuBtn.style.cssText = 'background:none;border:none;font-size:24px;cursor:pointer;margin-right:16px;transition:transform 0.2s;';
+            menuBtn.onmouseenter = () => menuBtn.style.transform = 'scale(1.1)';
+            menuBtn.onmouseleave = () => menuBtn.style.transform = 'scale(1)';
+            menuBtn.onclick = () => {
+                document.getElementById('sidebar').classList.toggle('open');
+                menuBtn.style.transform = document.getElementById('sidebar').classList.contains('open') ? 'rotate(90deg)' : 'rotate(0deg)';
+            };
+            document.querySelector('.header-logo').before(menuBtn);
+        }
+
+        // Check for hash on load
+        if (window.location.hash) {
+            const hash = window.location.hash.slice(1);
+            if (document.getElementById(hash)) {
+                showSection(hash);
+            }
+        }
+    </script>
+</body>
+</html>

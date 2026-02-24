@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMoji Web - Test Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 40px;
+            line-height: 1.6;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #0088CC; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+        .status.success { background: #34C759; }
+        .status.error { background: #FF3B30; }
+        .status.pending { background: #FF9500; }
+        input, button {
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        button {
+            background: #0088CC;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover { background: #0077B3; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .output {
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 12px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .emoji-preview {
+            display: inline-flex;
+            width: 48px;
+            height: 48px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 4px;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 TMoji Web Test Suite</h1>
+        <p class="subtitle">Test your TMoji Web installation</p>
+
+        <!-- Test 1: Backend Connection -->
+        <div class="test-card">
+            <div class="test-title">
+                <span class="status pending" id="status-backend"></span>
+                Test 1: Backend Connection
+            </div>
+            <p>Check if the backend API is running</p>
+            <input type="text" id="backend-url" value="http://localhost:8000" placeholder="Backend URL">
+            <button onclick="testBackend()">Test Connection</button>
+            <div class="output" id="output-backend">Click "Test Connection" to start...</div>
+        </div>
+
+        <!-- Test 2: Load Emoji Pack -->
+        <div class="test-card">
+            <div class="test-title">
+                <span class="status pending" id="status-pack"></span>
+                Test 2: Load Emoji Pack
+            </div>
+            <p>Load a Telegram emoji pack</p>
+            <input type="text" id="pack-url" value="vector_icons_by_fStikBot" placeholder="Pack name or URL" style="width: 300px;">
+            <button onclick="testLoadPack()">Load Pack</button>
+            <div class="output" id="output-pack">Waiting...</div>
+            <div class="grid" id="pack-preview"></div>
+        </div>
+
+        <!-- Test 3: Render Emoji -->
+        <div class="test-card">
+            <div class="test-title">
+                <span class="status pending" id="status-render"></span>
+                Test 3: Render Single Emoji
+            </div>
+            <p>Render a specific emoji by ID</p>
+            <input type="text" id="emoji-id" placeholder="Emoji ID (e.g., 123456789)">
+            <button onclick="testRender()">Render</button>
+            <div class="output" id="output-render">Waiting...</div>
+            <div id="emoji-container" style="margin-top: 12px; min-height: 60px;"></div>
+        </div>
+
+        <!-- Test 4: Text Parsing -->
+        <div class="test-card">
+            <div class="test-title">
+                <span class="status pending" id="status-text"></span>
+                Test 4: Text Parsing
+            </div>
+            <p>Parse text with {emoji:ID} syntax</p>
+            <input type="text" id="text-input" value="Hello {emoji:123456} World!" style="width: 400px;">
+            <button onclick="testTextParse()">Parse</button>
+            <div class="output" id="output-text">Waiting...</div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="test-card">
+            <div class="test-title">📊 Test Results Summary</div>
+            <div id="test-summary">Run all tests to see results...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import the library (adjust path as needed)
+        import { TMoji } from '../frontend/dist/tmoji.esm.js';
+
+        let tg = null;
+
+        // Test 1: Backend Connection
+        window.testBackend = async () => {
+            const url = document.getElementById('backend-url').value;
+            const output = document.getElementById('output-backend');
+            const status = document.getElementById('status-backend');
+
+            output.textContent = 'Testing connection...';
+            status.className = 'status pending';
+
+            try {
+                const response = await fetch(`${url}/health`);
+                const data = await response.json();
+
+                if (data.status === 'healthy') {
+                    status.className = 'status success';
+                    output.textContent = `✅ Backend is running!\n📡 Telegram API: ${data.telegram_api ? 'Connected' : 'Not configured'}`;
+
+                    // Initialize TMoji
+                    tg = new TMoji({ apiBaseUrl: url });
+                } else {
+                    throw new Error('Unhealthy status');
+                }
+            } catch (e) {
+                status.className = 'status error';
+                output.textContent = `❌ Error: ${e.message}\n\nMake sure the backend is running:\n  cd backend\n  python -m app.main`;
+            }
+        };
+
+        // Test 2: Load Pack
+        window.testLoadPack = async () => {
+            if (!tg) {
+                alert('Please test backend connection first!');
+                return;
+            }
+
+            const url = document.getElementById('pack-url').value;
+            const output = document.getElementById('output-pack');
+            const preview = document.getElementById('pack-preview');
+            const status = document.getElementById('status-pack');
+
+            output.textContent = 'Loading pack...';
+            status.className = 'status pending';
+            preview.innerHTML = '';
+
+            try {
+                const pack = await tg.loadPack(url);
+                status.className = 'status success';
+                output.textContent = `✅ Loaded: ${pack.title}\n📊 ${pack.stickers.length} stickers\n📝 Type: ${pack.sticker_type}`;
+
+                // Show first 12 emojis
+                pack.stickers.slice(0, 12).forEach(emoji => {
+                    const div = document.createElement('div');
+                    div.className = 'emoji-preview';
+                    div.textContent = emoji.emoji || '🎨';
+                    div.title = emoji.short_name;
+                    preview.appendChild(div);
+                });
+            } catch (e) {
+                status.className = 'status error';
+                output.textContent = `❌ Error: ${e.message}`;
+            }
+        };
+
+        // Test 3: Render Emoji
+        window.testRender = async () => {
+            if (!tg) {
+                alert('Please test backend connection first!');
+                return;
+            }
+
+            const id = document.getElementById('emoji-id').value;
+            const output = document.getElementById('output-render');
+            const container = document.getElementById('emoji-container');
+            const status = document.getElementById('status-render');
+
+            output.textContent = 'Rendering...';
+            status.className = 'status pending';
+            container.innerHTML = '';
+
+            try {
+                const div = document.createElement('div');
+                div.style.width = '64px';
+                div.style.height = '64px';
+                container.appendChild(div);
+
+                await tg.renderTo(div, id, { size: '64px' });
+                status.className = 'status success';
+                output.textContent = `✅ Rendered emoji ${id}`;
+            } catch (e) {
+                status.className = 'status error';
+                output.textContent = `❌ Error: ${e.message}`;
+            }
+        };
+
+        // Test 4: Text Parse
+        window.testTextParse = async () => {
+            const text = document.getElementById('text-input').value;
+            const output = document.getElementById('output-text');
+            const status = document.getElementById('status-text');
+
+            output.textContent = 'Parsing...';
+            status.className = 'status pending';
+
+            try {
+                // Simulate parsing
+                const parsed = text.replace(/{emoji:(\d+)}/g, '[EMOJI:$1]');
+                status.className = 'status success';
+                output.textContent = `✅ Parsed:\n${parsed}`;
+            } catch (e) {
+                status.className = 'status error';
+                output.textContent = `❌ Error: ${e.message}`;
+            }
+        };
+    </script>
+</body>
+</html>
