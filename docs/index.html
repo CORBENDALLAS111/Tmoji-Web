@@ -406,6 +406,15 @@
             background: rgba(52, 199, 89, 0.08);
         }
 
+        .info-box.error {
+            background: rgba(255, 59, 48, 0.05);
+            border-left-color: var(--accent-red);
+        }
+
+        .info-box.error:hover {
+            background: rgba(255, 59, 48, 0.08);
+        }
+
         .info-box-title {
             font-weight: 600;
             margin-bottom: 8px;
@@ -504,6 +513,12 @@
             height: 300px;
         }
 
+        .demo-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .demo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -554,6 +569,14 @@
             justify-content: center;
             font-size: 32px;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        .emoji-preview img,
+        .emoji-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .emoji-item:hover .emoji-preview {
@@ -846,7 +869,7 @@
         </a>
         <nav class="header-nav">
             <a href="#" onclick="showSection('demo'); return false;">Demo</a>
-            <a href="https://corbendallas111.github.io/Tmoji-Web/" target="_blank">GitHub</a>
+            <a href="https://github.com/CORBENDALLAS111/Tmoji-Web" target="_blank">GitHub</a>
         </nav>
     </header>
 
@@ -1248,14 +1271,14 @@ pip install -r requirements.txt</code></pre>
                         <input type="text" class="demo-input" id="packUrl" 
                                placeholder="https://t.me/addemoji/vector_icons_by_fStikBot"
                                value="https://t.me/addemoji/vector_icons_by_fStikBot">
-                        <button class="demo-button" onclick="loadPack()">Load Pack</button>
+                        <button class="demo-button" id="loadPackBtn" onclick="loadPack()">Load Pack</button>
                         <div id="packResults" class="demo-grid"></div>
                     </div>
 
                     <div class="demo-section">
                         <div class="demo-title">Render Single Emoji</div>
-                        <input type="text" class="demo-input" id="emojiId" placeholder="Enter emoji ID">
-                        <button class="demo-button" onclick="renderEmoji()">Render</button>
+                        <input type="text" class="demo-input" id="emojiId" placeholder="Enter emoji ID (e.g., 123456789)">
+                        <button class="demo-button" id="renderEmojiBtn" onclick="renderEmoji()">Render</button>
                         <div id="emojiPreview" style="margin-top: 20px; min-height: 100px;"></div>
                     </div>
                 </section>
@@ -1264,6 +1287,9 @@ pip install -r requirements.txt</code></pre>
     </div>
 
     <script>
+        // API Configuration - Using your live Render backend
+        const API_URL = 'https://tmoji-web.onrender.com';
+
         // Navigation
         function showSection(sectionId) {
             // Hide all sections
@@ -1309,25 +1335,178 @@ pip install -r requirements.txt</code></pre>
             pre.appendChild(btn);
         });
 
-        // Demo functions
+        // Real Demo Functions
         async function loadPack() {
             const url = document.getElementById('packUrl').value;
             const results = document.getElementById('packResults');
-            results.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div><p style="text-align:center;">Loading...</p>';
-
-            setTimeout(() => {
-                results.innerHTML = '<div class="info-box" style="grid-column: 1/-1;">Demo mode: Connect backend to load real emojis</div>';
-            }, 800);
-        }
-
-        function renderEmoji() {
-            const id = document.getElementById('emojiId').value;
-            const preview = document.getElementById('emojiPreview');
-            if (!id) {
-                preview.innerHTML = '<div class="info-box warning">Please enter an emoji ID</div>';
+            const btn = document.getElementById('loadPackBtn');
+            
+            if (!url) {
+                results.innerHTML = '<div class="info-box error" style="grid-column: 1/-1;"><div class="info-box-title">Error</div>Please enter a pack URL</div>';
                 return;
             }
-            preview.innerHTML = '<div class="info-box">Demo: Would render emoji ' + id + '</div>';
+
+            // Show loading state
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+            results.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div><p style="text-align:center; color: var(--tg-text-secondary);">Loading pack...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/pack?url=${encodeURIComponent(url)}`);
+                
+                if (!response.ok) {
+                    if (response.status === 503) {
+                        throw new Error('Backend not configured. Please check BOT_TOKEN.');
+                    }
+                    const error = await response.json();
+                    throw new Error(error.detail || `HTTP ${response.status}`);
+                }
+
+                const pack = await response.json();
+                
+                // Display results
+                let html = `<div style="grid-column: 1/-1; margin-bottom: 16px;">
+                    <strong style="font-size: 18px; color: var(--tg-text);">${pack.title}</strong>
+                    <span style="color: var(--tg-text-secondary); margin-left: 8px;">(${pack.stickers.length} emojis)</span>
+                </div>`;
+
+                if (pack.stickers.length === 0) {
+                    html += '<div style="grid-column: 1/-1;" class="info-box">No emojis found in this pack</div>';
+                } else {
+                    html += pack.stickers.map((emoji, index) => `
+                        <div class="emoji-item" style="animation-delay: ${index * 0.05}s" onclick="copyEmojiId('${emoji.id}')">
+                            <div class="emoji-preview">
+                                ${renderEmojiPreview(emoji)}
+                            </div>
+                            <div class="emoji-id" title="${emoji.id}">${emoji.id.slice(0, 8)}...</div>
+                            <div style="font-size: 11px; color: var(--tg-text-secondary); margin-top: 4px;">${emoji.file_type}</div>
+                        </div>
+                    `).join('');
+                }
+
+                results.innerHTML = html;
+
+            } catch (error) {
+                results.innerHTML = `<div class="info-box error" style="grid-column: 1/-1;">
+                    <div class="info-box-title">Error</div>
+                    ${error.message}<br>
+                    <small style="color: var(--tg-text-secondary);">Make sure the backend is running and BOT_TOKEN is set.</small>
+                </div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Load Pack';
+            }
+        }
+
+        function renderEmojiPreview(emoji) {
+            if (emoji.file_type === 'tgs') {
+                // For TGS, show placeholder since we need to decompress
+                return `<div style="font-size: 24px;">🎭</div>`;
+            } else if (emoji.file_type === 'webm' && emoji.file_url) {
+                return `<video src="${emoji.file_url}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>`;
+            } else if (emoji.file_url) {
+                return `<img src="${emoji.file_url}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='<div style=\\'font-size: 24px;\\'>❓</div>'">`;
+            } else {
+                return `<div style="font-size: 24px;">❓</div>`;
+            }
+        }
+
+        function copyEmojiId(id) {
+            navigator.clipboard.writeText(id).then(() => {
+                // Show temporary feedback
+                const feedback = document.createElement('div');
+                feedback.textContent = 'Copied!';
+                feedback.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: var(--accent-green); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; z-index: 10000; animation: popIn 0.3s ease;';
+                document.body.appendChild(feedback);
+                setTimeout(() => feedback.remove(), 2000);
+            });
+        }
+
+        async function renderEmoji() {
+            const id = document.getElementById('emojiId').value.trim();
+            const preview = document.getElementById('emojiPreview');
+            const btn = document.getElementById('renderEmojiBtn');
+
+            if (!id) {
+                preview.innerHTML = '<div class="info-box error"><div class="info-box-title">Error</div>Please enter an emoji ID</div>';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+            preview.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
+
+            try {
+                const response = await fetch(`${API_URL}/emoji/${encodeURIComponent(id)}`);
+                
+                if (!response.ok) {
+                    if (response.status === 503) {
+                        throw new Error('Backend not configured. Please check BOT_TOKEN.');
+                    }
+                    const error = await response.json();
+                    throw new Error(error.detail || `HTTP ${response.status}`);
+                }
+
+                const emoji = await response.json();
+
+                let html = `<div class="info-box success" style="margin-bottom: 16px;">
+                    <div class="info-box-title">${emoji.short_name}</div>
+                    <span class="badge beta">${emoji.file_type}</span>
+                    ${emoji.is_animated ? '<span class="badge new">Animated</span>' : ''}
+                </div>`;
+
+                html += `<div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">`;
+                
+                // Main preview
+                html += `<div style="background: white; border: 2px solid var(--tg-border); border-radius: 16px; padding: 32px; min-width: 200px; text-align: center;">`;
+                html += `<div style="width: 128px; height: 128px; margin: 0 auto 16px; background: var(--tg-bg-secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;">`;
+                
+                if (emoji.file_type === 'webm' && emoji.file_url) {
+                    html += `<video src="${emoji.file_url}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>`;
+                } else if (emoji.file_url) {
+                    html += `<img src="${emoji.file_url}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 48px;\\'>📄</div>'">`;
+                } else {
+                    html += `<div style="font-size: 48px;">📄</div>`;
+                }
+                
+                html += `</div>`;
+                html += `<div style="font-family: var(--font-mono); font-size: 12px; color: var(--tg-text-secondary); word-break: break-all;">${emoji.id}</div>`;
+                html += `</div>`;
+
+                // Details
+                html += `<div style="flex: 1; min-width: 200px;">`;
+                html += `<h4 style="margin-top: 0;">Details</h4>`;
+                html += `<table style="margin: 0;">`;
+                html += `<tr><td><strong>ID</strong></td><td><code class="inline-code">${emoji.id}</code></td></tr>`;
+                html += `<tr><td><strong>Name</strong></td><td>${emoji.short_name}</td></tr>`;
+                html += `<tr><td><strong>Type</strong></td><td><span class="badge beta">${emoji.file_type}</span></td></tr>`;
+                html += `<tr><td><strong>Size</strong></td><td>${emoji.width}x${emoji.height}</td></tr>`;
+                html += `<tr><td><strong>Animated</strong></td><td>${emoji.is_animated ? 'Yes' : 'No'}</td></tr>`;
+                if (emoji.set_name) {
+                    html += `<tr><td><strong>Pack</strong></td><td>${emoji.set_name}</td></tr>`;
+                }
+                html += `</table>`;
+                
+                if (emoji.file_url) {
+                    html += `<div style="margin-top: 16px;">`;
+                    html += `<a href="${emoji.file_url}" target="_blank" class="demo-button" style="display: inline-block; text-decoration: none; font-size: 13px; padding: 8px 16px;">Download File</a>`;
+                    html += `</div>`;
+                }
+                
+                html += `</div></div>`;
+
+                preview.innerHTML = html;
+
+            } catch (error) {
+                preview.innerHTML = `<div class="info-box error">
+                    <div class="info-box-title">Error</div>
+                    ${error.message}<br>
+                    <small style="color: var(--tg-text-secondary);">Make sure the emoji ID is correct and backend is running.</small>
+                </div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Render';
+            }
         }
 
         // Mobile sidebar toggle
