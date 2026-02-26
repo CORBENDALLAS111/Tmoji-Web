@@ -9,7 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     <style>
         :root {
-            /* Telegram Design System Colors */
             --tg-blue: #0088CC;
             --tg-blue-light: #0099E0;
             --tg-blue-dark: #0077B3;
@@ -20,19 +19,13 @@
             --tg-text-secondary: #707579;
             --tg-border: #D9D9D9;
             --tg-border-light: #E6E6E6;
-
-            /* Apple Dev Docs inspired */
             --code-bg: #F5F5F7;
             --code-border: #E5E5E5;
             --accent-green: #34C759;
             --accent-orange: #FF9500;
             --accent-red: #FF3B30;
-
-            /* Typography */
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'JetBrains Mono', SF Mono, Monaco, monospace;
-
-            /* Spacing */
             --sidebar-width: 280px;
             --header-height: 64px;
             --max-content-width: 900px;
@@ -56,7 +49,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Header with slide-down animation */
         .header {
             position: fixed;
             top: 0;
@@ -70,18 +62,22 @@
             display: flex;
             align-items: center;
             padding: 0 24px;
-            animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: var(--tg-bg-secondary);
         }
 
         .header-logo {
@@ -144,14 +140,30 @@
             width: 100%;
         }
 
-        /* Layout */
         .layout {
             display: flex;
             margin-top: var(--header-height);
             min-height: calc(100vh - var(--header-height));
         }
 
-        /* Sidebar with slide-in animation */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         .sidebar {
             position: fixed;
             left: 0;
@@ -162,6 +174,8 @@
             border-right: 1px solid var(--tg-border-light);
             overflow-y: auto;
             padding: 24px 0;
+            z-index: 999;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
         }
 
@@ -249,7 +263,6 @@
             padding-left: 28px;
         }
 
-        /* Main Content */
         .main {
             margin-left: var(--sidebar-width);
             flex: 1;
@@ -262,7 +275,6 @@
             margin: 0 auto;
         }
 
-        /* Typography with stagger animations */
         h1 {
             font-size: 40px;
             font-weight: 700;
@@ -311,7 +323,6 @@
             font-weight: 600;
         }
 
-        /* Code Blocks with hover lift */
         pre {
             background: var(--code-bg);
             border: 1px solid var(--code-border);
@@ -346,7 +357,6 @@
             padding: 0;
         }
 
-        /* Inline Code */
         .inline-code {
             background: rgba(0, 136, 204, 0.1);
             color: var(--tg-blue-dark);
@@ -361,7 +371,6 @@
             background: rgba(0, 136, 204, 0.15);
         }
 
-        /* Info Boxes with slide-in */
         .info-box {
             background: rgba(0, 136, 204, 0.05);
             border-left: 4px solid var(--tg-blue);
@@ -421,7 +430,6 @@
             color: var(--tg-text);
         }
 
-        /* Interactive Demo with entrance animation */
         .demo-section {
             background: var(--tg-bg-secondary);
             border-radius: 16px;
@@ -590,7 +598,6 @@
             word-break: break-all;
         }
 
-        /* Tables with row animations */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -636,7 +643,6 @@
             transform: scale(1.01);
         }
 
-        /* Lists */
         ul, ol {
             margin: 16px 0;
             padding-left: 24px;
@@ -664,7 +670,6 @@
             color: var(--tg-text);
         }
 
-        /* Architecture Diagram with stagger */
         .architecture {
             background: var(--tg-bg-secondary);
             border-radius: 16px;
@@ -724,33 +729,6 @@
             50% { opacity: 1; transform: translateX(4px); }
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 999;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main {
-                margin-left: 0;
-                max-width: 100%;
-            }
-
-            .content {
-                padding: 24px;
-            }
-
-            h1 {
-                font-size: 32px;
-            }
-        }
-
-        /* Section visibility */
         .section {
             display: none;
         }
@@ -765,7 +743,6 @@
             to { opacity: 1; }
         }
 
-        /* Copy button with animations */
         .copy-btn {
             position: absolute;
             top: 12px;
@@ -796,7 +773,6 @@
             transform: scale(0.95);
         }
 
-        /* Badge */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -818,7 +794,6 @@
             color: var(--tg-blue);
         }
 
-        /* Links with underline animation */
         a {
             color: var(--tg-blue);
             text-decoration: none;
@@ -830,7 +805,6 @@
             color: var(--tg-blue-dark);
         }
 
-        /* Loading spinner for demo */
         .spinner {
             width: 40px;
             height: 40px;
@@ -844,22 +818,66 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Stagger children animation helper */
-        .stagger-children > * {
-            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        .tg-emoji-inline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            width: 1.2em;
+            height: 1.2em;
         }
 
-        .stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
-        .stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
-        .stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
-        .stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
-        .stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
-        .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+        .tg-emoji-inline img,
+        .tg-emoji-inline video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @media (max-width: 1024px) {
+            .menu-btn {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .header-nav {
+                gap: 16px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .sidebar {
+                transform: translateX(0) !important;
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
     </style>
-<base target="_blank">
 </head>
 <body>
     <header class="header">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <a href="#" class="header-logo">
             <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="14" fill="#0088CC"/>
@@ -872,6 +890,8 @@
             <a href="https://github.com/CORBENDALLAS111/Tmoji-Web" target="_blank">GitHub</a>
         </nav>
     </header>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div class="layout">
         <aside class="sidebar" id="sidebar">
@@ -1287,33 +1307,97 @@ pip install -r requirements.txt</code></pre>
     </div>
 
     <script>
-        // API Configuration - Using your live Render backend
-        const API_URL = 'https://tmoji-web.onrender.com';
+        // TMoji Library Implementation
+        class TMoji {
+            constructor(config = {}) {
+                this.apiBaseUrl = config.apiBaseUrl || 'https://tmoji-web.onrender.com';
+                this.defaultSize = config.defaultSize || '1.2em';
+                this.cache = new Map();
+            }
+
+            async loadPack(urlOrName) {
+                const url = `${this.apiBaseUrl}/pack?url=${encodeURIComponent(urlOrName)}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(await res.text());
+                return res.json();
+            }
+
+            async getEmoji(id) {
+                const url = `${this.apiBaseUrl}/emoji/${id}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(await res.text());
+                return res.json();
+            }
+
+            async renderTo(selector, emojiId, options = {}) {
+                const container = typeof selector === 'string' ? document.querySelector(selector) : selector;
+                if (!container) return;
+
+                const emoji = await this.getEmoji(emojiId);
+                const size = options.size || this.defaultSize;
+                
+                container.innerHTML = '';
+                container.style.width = size;
+                container.style.height = size;
+                container.style.display = 'inline-flex';
+                container.style.alignItems = 'center';
+                container.style.justifyContent = 'center';
+
+                if (emoji.file_type === 'webm' && emoji.file_url) {
+                    const video = document.createElement('video');
+                    video.src = emoji.file_url;
+                    video.autoplay = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.style.width = '100%';
+                    video.style.height = '100%';
+                    video.style.objectFit = 'contain';
+                    container.appendChild(video);
+                } else if (emoji.file_url) {
+                    const img = document.createElement('img');
+                    img.src = emoji.file_url;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'contain';
+                    img.onerror = () => {
+                        container.innerHTML = '❓';
+                    };
+                    container.appendChild(img);
+                } else {
+                    container.innerHTML = '❓';
+                }
+            }
+        }
+
+        // Global instance
+        const tg = new TMoji();
 
         // Navigation
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
         function showSection(sectionId) {
-            // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            // Show target
             document.getElementById(sectionId).classList.add('active');
-            // Update sidebar
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
             const link = document.querySelector(`[data-section="${sectionId}"]`);
             if (link) link.classList.add('active');
-            // Scroll to top
+            
+            if (window.innerWidth <= 1024) {
+                toggleSidebar();
+            }
+            
             window.scrollTo(0, 0);
-            // Update URL hash
             history.pushState(null, null, `#${sectionId}`);
             return false;
         }
 
-        // Handle browser back/forward
-        window.addEventListener('popstate', function() {
-            const hash = window.location.hash.slice(1) || 'overview';
-            showSection(hash);
-        });
-
-        // Copy code functionality
+        // Copy code buttons
         document.querySelectorAll('pre').forEach(pre => {
             const btn = document.createElement('button');
             btn.className = 'copy-btn';
@@ -1321,76 +1405,55 @@ pip install -r requirements.txt</code></pre>
             btn.onclick = () => {
                 navigator.clipboard.writeText(pre.textContent.replace('Copy', '').trim());
                 btn.textContent = 'Copied!';
-                btn.style.background = 'rgba(52, 199, 89, 0.1)';
-                btn.style.color = 'var(--accent-green)';
-                btn.style.borderColor = 'var(--accent-green)';
-                setTimeout(() => {
-                    btn.textContent = 'Copy';
-                    btn.style.background = 'white';
-                    btn.style.color = '';
-                    btn.style.borderColor = '';
-                }, 2000);
+                setTimeout(() => btn.textContent = 'Copy', 2000);
             };
             pre.style.position = 'relative';
             pre.appendChild(btn);
         });
 
-        // Real Demo Functions
+        // Demo functions
         async function loadPack() {
             const url = document.getElementById('packUrl').value;
             const results = document.getElementById('packResults');
             const btn = document.getElementById('loadPackBtn');
             
-            if (!url) {
-                results.innerHTML = '<div class="info-box error" style="grid-column: 1/-1;"><div class="info-box-title">Error</div>Please enter a pack URL</div>';
-                return;
-            }
+            if (!url) return;
 
-            // Show loading state
             btn.disabled = true;
             btn.textContent = 'Loading...';
-            results.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div><p style="text-align:center; color: var(--tg-text-secondary);">Loading pack...</p>';
+            results.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
 
             try {
-                const response = await fetch(`${API_URL}/pack?url=${encodeURIComponent(url)}`);
+                const pack = await tg.loadPack(url);
                 
-                if (!response.ok) {
-                    if (response.status === 503) {
-                        throw new Error('Backend not configured. Please check BOT_TOKEN.');
-                    }
-                    const error = await response.json();
-                    throw new Error(error.detail || `HTTP ${response.status}`);
-                }
-
-                const pack = await response.json();
-                
-                // Display results
-                let html = `<div style="grid-column: 1/-1; margin-bottom: 16px;">
-                    <strong style="font-size: 18px; color: var(--tg-text);">${pack.title}</strong>
-                    <span style="color: var(--tg-text-secondary); margin-left: 8px;">(${pack.stickers.length} emojis)</span>
+                let html = `<div style="grid-column: 1/-1; margin-bottom: 12px;">
+                    <strong>${pack.title}</strong> (${pack.stickers.length} emojis)
                 </div>`;
 
-                if (pack.stickers.length === 0) {
-                    html += '<div style="grid-column: 1/-1;" class="info-box">No emojis found in this pack</div>';
-                } else {
-                    html += pack.stickers.map((emoji, index) => `
-                        <div class="emoji-item" style="animation-delay: ${index * 0.05}s" onclick="copyEmojiId('${emoji.id}')">
-                            <div class="emoji-preview">
-                                ${renderEmojiPreview(emoji)}
-                            </div>
-                            <div class="emoji-id" title="${emoji.id}">${emoji.id.slice(0, 8)}...</div>
-                            <div style="font-size: 11px; color: var(--tg-text-secondary); margin-top: 4px;">${emoji.file_type}</div>
-                        </div>
-                    `).join('');
+                html += pack.stickers.slice(0, 20).map((emoji, i) => `
+                    <div class="emoji-item" onclick="copyToClipboard('${emoji.id}')" style="animation-delay: ${i * 0.03}s">
+                        <div class="emoji-preview" id="preview-${emoji.id}"></div>
+                        <div class="emoji-id">${emoji.id.slice(0, 10)}...</div>
+                        <span class="badge beta">${emoji.file_type}</span>
+                    </div>
+                `).join('');
+
+                if (pack.stickers.length > 20) {
+                    html += `<div style="grid-column: 1/-1; text-align: center; color: var(--tg-text-secondary);">
+                        +${pack.stickers.length - 20} more...
+                    </div>`;
                 }
 
                 results.innerHTML = html;
 
-            } catch (error) {
+                pack.stickers.slice(0, 20).forEach(emoji => {
+                    const container = document.getElementById(`preview-${emoji.id}`);
+                    if (container) renderEmojiToContainer(container, emoji);
+                });
+
+            } catch (err) {
                 results.innerHTML = `<div class="info-box error" style="grid-column: 1/-1;">
-                    <div class="info-box-title">Error</div>
-                    ${error.message}<br>
-                    <small style="color: var(--tg-text-secondary);">Make sure the backend is running and BOT_TOKEN is set.</small>
+                    <div class="info-box-title">Error</div>${err.message}
                 </div>`;
             } finally {
                 btn.disabled = false;
@@ -1398,137 +1461,101 @@ pip install -r requirements.txt</code></pre>
             }
         }
 
-        function renderEmojiPreview(emoji) {
-            if (emoji.file_type === 'tgs') {
-                // For TGS, show placeholder since we need to decompress
-                return `<div style="font-size: 24px;">🎭</div>`;
-            } else if (emoji.file_type === 'webm' && emoji.file_url) {
-                return `<video src="${emoji.file_url}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>`;
-            } else if (emoji.file_url) {
-                return `<img src="${emoji.file_url}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='<div style=\\'font-size: 24px;\\'>❓</div>'">`;
-            } else {
-                return `<div style="font-size: 24px;">❓</div>`;
-            }
-        }
-
-        function copyEmojiId(id) {
-            navigator.clipboard.writeText(id).then(() => {
-                // Show temporary feedback
-                const feedback = document.createElement('div');
-                feedback.textContent = 'Copied!';
-                feedback.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: var(--accent-green); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; z-index: 10000; animation: popIn 0.3s ease;';
-                document.body.appendChild(feedback);
-                setTimeout(() => feedback.remove(), 2000);
-            });
-        }
-
         async function renderEmoji() {
             const id = document.getElementById('emojiId').value.trim();
             const preview = document.getElementById('emojiPreview');
             const btn = document.getElementById('renderEmojiBtn');
 
-            if (!id) {
-                preview.innerHTML = '<div class="info-box error"><div class="info-box-title">Error</div>Please enter an emoji ID</div>';
-                return;
-            }
+            if (!id) return;
 
             btn.disabled = true;
             btn.textContent = 'Loading...';
             preview.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
 
             try {
-                const response = await fetch(`${API_URL}/emoji/${encodeURIComponent(id)}`);
+                const emoji = await tg.getEmoji(id);
                 
-                if (!response.ok) {
-                    if (response.status === 503) {
-                        throw new Error('Backend not configured. Please check BOT_TOKEN.');
-                    }
-                    const error = await response.json();
-                    throw new Error(error.detail || `HTTP ${response.status}`);
-                }
+                preview.innerHTML = `
+                    <div class="info-box success" style="margin-bottom: 16px;">
+                        <div class="info-box-title">${emoji.short_name}</div>
+                        <span class="badge beta">${emoji.file_type}</span>
+                        ${emoji.is_animated ? '<span class="badge new">Animated</span>' : ''}
+                    </div>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+                        <div style="background: white; border: 2px solid var(--tg-border); border-radius: 16px; padding: 32px;">
+                            <div id="single-preview" style="width: 128px; height: 128px;"></div>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <table>
+                                <tr><td>ID</td><td><code class="inline-code">${emoji.id}</code></td></tr>
+                                <tr><td>Type</td><td>${emoji.file_type}</td></tr>
+                                <tr><td>Size</td><td>${emoji.width}x${emoji.height}</td></tr>
+                            </table>
+                            ${emoji.file_url ? `<a href="${emoji.file_url}" target="_blank" class="demo-button" style="display: inline-block; margin-top: 12px; text-decoration: none;">Download</a>` : ''}
+                        </div>
+                    </div>
+                `;
 
-                const emoji = await response.json();
+                const container = document.getElementById('single-preview');
+                await renderEmojiToContainer(container, emoji, '128px');
 
-                let html = `<div class="info-box success" style="margin-bottom: 16px;">
-                    <div class="info-box-title">${emoji.short_name}</div>
-                    <span class="badge beta">${emoji.file_type}</span>
-                    ${emoji.is_animated ? '<span class="badge new">Animated</span>' : ''}
-                </div>`;
-
-                html += `<div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">`;
-                
-                // Main preview
-                html += `<div style="background: white; border: 2px solid var(--tg-border); border-radius: 16px; padding: 32px; min-width: 200px; text-align: center;">`;
-                html += `<div style="width: 128px; height: 128px; margin: 0 auto 16px; background: var(--tg-bg-secondary); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;">`;
-                
-                if (emoji.file_type === 'webm' && emoji.file_url) {
-                    html += `<video src="${emoji.file_url}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain;"></video>`;
-                } else if (emoji.file_url) {
-                    html += `<img src="${emoji.file_url}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 48px;\\'>📄</div>'">`;
-                } else {
-                    html += `<div style="font-size: 48px;">📄</div>`;
-                }
-                
-                html += `</div>`;
-                html += `<div style="font-family: var(--font-mono); font-size: 12px; color: var(--tg-text-secondary); word-break: break-all;">${emoji.id}</div>`;
-                html += `</div>`;
-
-                // Details
-                html += `<div style="flex: 1; min-width: 200px;">`;
-                html += `<h4 style="margin-top: 0;">Details</h4>`;
-                html += `<table style="margin: 0;">`;
-                html += `<tr><td><strong>ID</strong></td><td><code class="inline-code">${emoji.id}</code></td></tr>`;
-                html += `<tr><td><strong>Name</strong></td><td>${emoji.short_name}</td></tr>`;
-                html += `<tr><td><strong>Type</strong></td><td><span class="badge beta">${emoji.file_type}</span></td></tr>`;
-                html += `<tr><td><strong>Size</strong></td><td>${emoji.width}x${emoji.height}</td></tr>`;
-                html += `<tr><td><strong>Animated</strong></td><td>${emoji.is_animated ? 'Yes' : 'No'}</td></tr>`;
-                if (emoji.set_name) {
-                    html += `<tr><td><strong>Pack</strong></td><td>${emoji.set_name}</td></tr>`;
-                }
-                html += `</table>`;
-                
-                if (emoji.file_url) {
-                    html += `<div style="margin-top: 16px;">`;
-                    html += `<a href="${emoji.file_url}" target="_blank" class="demo-button" style="display: inline-block; text-decoration: none; font-size: 13px; padding: 8px 16px;">Download File</a>`;
-                    html += `</div>`;
-                }
-                
-                html += `</div></div>`;
-
-                preview.innerHTML = html;
-
-            } catch (error) {
-                preview.innerHTML = `<div class="info-box error">
-                    <div class="info-box-title">Error</div>
-                    ${error.message}<br>
-                    <small style="color: var(--tg-text-secondary);">Make sure the emoji ID is correct and backend is running.</small>
-                </div>`;
+            } catch (err) {
+                preview.innerHTML = `<div class="info-box error"><div class="info-box-title">Error</div>${err.message}</div>`;
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Render';
             }
         }
 
-        // Mobile sidebar toggle
-        if (window.innerWidth <= 1024) {
-            const menuBtn = document.createElement('button');
-            menuBtn.innerHTML = '☰';
-            menuBtn.style.cssText = 'background:none;border:none;font-size:24px;cursor:pointer;margin-right:16px;transition:transform 0.2s;';
-            menuBtn.onmouseenter = () => menuBtn.style.transform = 'scale(1.1)';
-            menuBtn.onmouseleave = () => menuBtn.style.transform = 'scale(1)';
-            menuBtn.onclick = () => {
-                document.getElementById('sidebar').classList.toggle('open');
-                menuBtn.style.transform = document.getElementById('sidebar').classList.contains('open') ? 'rotate(90deg)' : 'rotate(0deg)';
-            };
-            document.querySelector('.header-logo').before(menuBtn);
+        async function renderEmojiToContainer(container, emoji, size = '64px') {
+            container.style.width = size;
+            container.style.height = size;
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.style.justifyContent = 'center';
+
+            if (emoji.file_type === 'webm' && emoji.file_url) {
+                const video = document.createElement('video');
+                video.src = emoji.file_url;
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'contain';
+                container.appendChild(video);
+            } else if (emoji.file_url) {
+                const img = document.createElement('img');
+                img.src = emoji.file_url;
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'contain';
+                img.onerror = () => container.innerHTML = '❓';
+                container.appendChild(img);
+            } else {
+                container.innerHTML = '❓';
+            }
         }
 
-        // Check for hash on load
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            const feedback = document.createElement('div');
+            feedback.textContent = 'Copied!';
+            feedback.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: var(--accent-green); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600; z-index: 10000;';
+            document.body.appendChild(feedback);
+            setTimeout(() => feedback.remove(), 2000);
+        }
+
+        // Handle hash on load
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.slice(1) || 'overview';
+            if (document.getElementById(hash)) showSection(hash);
+        });
+
         if (window.location.hash) {
             const hash = window.location.hash.slice(1);
-            if (document.getElementById(hash)) {
-                showSection(hash);
-            }
+            if (document.getElementById(hash)) showSection(hash);
         }
     </script>
 </body>
